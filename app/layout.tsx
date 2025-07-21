@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Bricolage_Grotesque } from "next/font/google";
+import Header from "@/components/header";
+import Home from "./page";
 import { Toaster } from "@/components/ui/sonner";
+// import type { Product } from "@/components/header"; // adjust the path if needed
 import "./globals.css";
 
 const bricolage = Bricolage_Grotesque({
@@ -26,7 +29,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${bricolage.variable}`}>
+      <body className={`${bricolage.variable} bg-black`}>
+        <Header />
         {children}
         <Toaster />
       </body>
