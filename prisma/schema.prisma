@@ -1,27 +1,39 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
-  output   = "../app/generated/prisma"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mongodb"
   url      = env("DATABASE_URL")
 }
 
-// model Cart{
-//   id          String    @id @default(auto()) @map("_id") @db.ObjectId
-//   sessionId   String    @unique
-//   items       CartItem[]
-//   createdAt   DateTime  @default(now())
-// }
 
-// model CartItem {
-//   id          String    @id @default(auto()) @map("_id") @db.ObjectId
-//   productId   Int
-// }
+
+model CartItem{
+  id                    String    @id @default(auto())  @map("_id")   @db.ObjectId
+  productId             Int       
+  title                 String
+  rating                Float
+  brand                 String
+  category              String
+  price                 Float
+  discountPercentage    Float
+  description           String
+  stock                 Int
+  quantity              Int       @default(1)
+  addedAt               DateTime  @default(now())
+}
+
+model WishlistItem{
+  id                    String    @id @default(auto())  @map("_id")   @db.ObjectId
+  productId             Int
+  title                 String
+  rating                Float
+  // brand                 String
+  // category              String
+  price                 Float
+  discountPercentage    Float
+  // description           String
+  // stock                 Int
+  addedAt             DateTime  @default(now())
+}

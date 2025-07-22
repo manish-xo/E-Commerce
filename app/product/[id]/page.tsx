@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
+import { Heart } from "lucide-react";
 import axios from "axios";
 import Image from "next/image";
 import { toast } from "sonner";
@@ -93,34 +94,58 @@ const page = () => {
   if (!product)
     return <div className="text-center py-20">Product not found</div>;
 
+  const addToCart = async (productId: number) => {
+    if (!product) return;
+
+    try {
+      await axios.post("/api/add-to-cart", {
+        productId: product.id,
+        title: product.title,
+        rating: product.rating,
+        brand: product.brand,
+        category: product.category,
+        price: product.price,
+        discountPercentage: product.discountPercentage,
+        description: product.description,
+        stock: product.stock,
+        quantity: 1, // or allow user to select
+      });
+      toast.success("🛒 Added to cart", {
+        description: `${product.title} has been added successfully.`,
+        duration: 3000,
+      });
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+      toast.error("❌ Failed to add", {
+        description: "Something went wrong. Please try again.",
+        duration: 3000,
+      });
+    }
+  };
+
   return (
     <section>
-      <Link href={"/"} passHref className="text-blue-500 mb-4 inline-block">
+      <Link
+        href={"/"}
+        passHref
+        className="text-blue-500 my-3 mx-5 inline-block"
+      >
         ← Back to products
       </Link>
 
-      <div className="bg-gray-800 rounded-lg p-6">
+      <div className="bg-black rounded-lg p-6">
         {/* Product Header */}
         <div className="flex flex-col md:flex-row gap-8">
           {/* Image Gallery */}
           <div className="w-full md:w-1/2">
-            <div className="mb-4">
-              <Image
-                src={product.thumbnail}
-                alt={product.title}
-                fill
-                className="object-cover w-15 h-15"
-                priority
-              />
-            </div>
-            <div className="grid w-[10rem] h-[10rem] grid-cols-4 gap-2">
+            <div className="relative w-[30rem] h-[25rem]">
               {product.images.map((image, index) => (
                 <Image
                   key={index}
                   src={image}
                   alt={`${product.title} ${index + 1}`}
                   fill
-                  className="object-cover bg-red-500 w-full h-full cursor-pointer"
+                  className="object-cover w-full h-full cursor-pointer absolute"
                 />
               ))}
             </div>
@@ -128,7 +153,9 @@ const page = () => {
 
           {/* Product Info */}
           <div className="w-full md:w-1/2">
-            <h1 className="text-2xl font-bold mb-2">{product.title}</h1>
+            <h1 className="text-2xl font-bold mb-2 text-white">
+              {product.title}
+            </h1>
             <div className="flex items-center mb-4">
               <span className="bg-yellow-600 text-white px-2 py-1 rounded text-sm">
                 {product.rating} ★
@@ -139,7 +166,9 @@ const page = () => {
             </div>
 
             <div className="mb-6">
-              <span className="text-3xl font-bold">₹{product.price}</span>
+              <span className="text-3xl font-bold text-white">
+                ₹{product.price}
+              </span>
               {product.discountPercentage > 0 && (
                 <>
                   <span className="ml-2 text-gray-400 line-through">
@@ -155,49 +184,72 @@ const page = () => {
               )}
             </div>
 
-            <p className="mb-6">{product.description}</p>
+            <p className="mb-6 text-white">{product.description}</p>
 
             <div className="grid grid-cols-2 gap-4 mb-6">
               <div>
-                <h3 className="font-semibold">Availability</h3>
-                <p>{product.stock > 0 ? "In Stock" : "Out of Stock"}</p>
+                <h3 className="font-semibold text-white">Availability</h3>
+                <p className="text-white">
+                  {product.stock > 0 ? "In Stock" : "Out of Stock"}
+                </p>
               </div>
               <div>
-                <h3 className="font-semibold">Weight</h3>
-                <p>{product.weight} g</p>
+                <h3 className="font-semibold text-white">Weight</h3>
+                <p className="text-white">{product.weight} g</p>
               </div>
               {/* Add more specs as needed */}
             </div>
 
-            <button className="bg-yellow-600 text-white px-6 py-3 rounded-lg hover:bg-yellow-700 transition">
-              Add to Cart
-            </button>
+            <div className="opt flex items-center gap-5">
+              <button
+                onClick={() => addToCart(product.id)}
+                className="bg-yellow-600 text-white px-6 py-3 rounded-lg cursor-pointer hover:bg-yellow-700 transition"
+              >
+                Add to Cart
+              </button>
+
+              <div className="wishlist">
+                <Heart
+                  className="text-white cursor-pointer"
+                  fill=""
+                  size={30}
+                />
+              </div>
+            </div>
           </div>
         </div>
 
         {/* Additional Details */}
         <div className="mt-12">
-          <h2 className="text-xl font-bold mb-4">Product Details</h2>
+          <h2 className="text-xl font-bold mb-4 text-white">Product Details</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <h3 className="font-semibold mb-2">Specifications</h3>
-              <ul className="space-y-2">
+              <h3 className="font-semibold mb-2 text-white">Specifications</h3>
+              <ul className="space-y-2 text-white">
                 <li>
-                  <strong>Brand:</strong> {product.brand}
+                  <strong>Brand:</strong>{" "}
+                  <span className="font-extralight">{product.brand}</span>
                 </li>
                 <li>
-                  <strong>Category:</strong> {product.category}
+                  <strong>Category:</strong>{" "}
+                  <span className="font-extralight text-sm">
+                    {product.category}
+                  </span>
                 </li>
                 <li>
-                  <strong>SKU:</strong> {product.sku}
+                  <strong>SKU:</strong>{" "}
+                  <span className="font-extralight text-sm">{product.sku}</span>
                 </li>
                 <li>
-                  <strong>Dimensions:</strong> {product.dimensions.width}x
-                  {product.dimensions.height}x{product.dimensions.depth} cm
+                  <strong>Dimensions:</strong>{" "}
+                  <span className="font-extralight text-sm">
+                    {product.dimensions.width}x{product.dimensions.height}x
+                    {product.dimensions.depth} cm
+                  </span>
                 </li>
               </ul>
             </div>
-            <div>
+            <div className="text-white">
               <h3 className="font-semibold mb-2">Warranty</h3>
               <p>{product.warrantyInformation}</p>
             </div>
@@ -207,7 +259,9 @@ const page = () => {
         {/* Reviews Section */}
         {product.reviews.length > 0 && (
           <div className="mt-12">
-            <h2 className="text-xl font-bold mb-4">Customer Reviews</h2>
+            <h2 className="text-xl font-bold mb-4 text-white">
+              Customer Reviews
+            </h2>
             <div className="space-y-4">
               {product.reviews.map((review, index) => (
                 <div key={index} className="border-b border-gray-700 pb-4">
@@ -215,7 +269,7 @@ const page = () => {
                     <span className="bg-yellow-600 text-white px-2 py-1 rounded text-xs">
                       {review.rating} ★
                     </span>
-                    <span className="ml-2 font-medium">
+                    <span className="ml-2 font-medium text-white">
                       {review.reviewerName}
                     </span>
                   </div>
