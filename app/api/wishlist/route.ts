@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+// import { PrismaClient } from "@prisma/client";
+import { prisma } from "@/libs/prisma";
 
-const prisma = new PrismaClient();
+// const prisma = new PrismaClient();
 
 export async function POST(req: NextRequest) {
   try {
@@ -19,7 +20,6 @@ export async function POST(req: NextRequest) {
     const existingItem = await prisma.wishlistItem.findFirst({
       where: { productId },
     });
-
     if (existingItem) {
       return NextResponse.json(
         { message: "Item already in wishlist", item: existingItem },
@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    //todo      <-----Add new wishlist item----->
+    // //todo      <-----Add new wishlist item----->
     const item = await prisma.wishlistItem.create({
       data: {
         productId,

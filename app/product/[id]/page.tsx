@@ -67,6 +67,7 @@ const page = () => {
   const router = useRouter();
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isWishlisted, setIsWishlisted] = useState(false);
 
   const fetchProductData = async () => {
     try {
@@ -110,14 +111,53 @@ const page = () => {
         stock: product.stock,
         quantity: 1, // or allow user to select
       });
-      toast.success("🛒 Added to cart", {
-        description: `${product.title} has been added successfully.`,
-        duration: 3000,
-      });
+      toast.success(
+        <div>
+          🛒 Added to cart
+          <div style={{ color: "black", fontSize: "1rem" }}>
+            {product.title} has been added successfully.
+          </div>
+        </div>,
+        {
+          duration: 3000,
+        }
+      );
     } catch (error) {
       console.error("Error adding to cart:", error);
       toast.error("❌ Failed to add", {
         description: "Something went wrong. Please try again.",
+        duration: 3000,
+      });
+    }
+  };
+
+  const addFavourite = async (productId: number) => {
+    if (!product) return;
+
+    try {
+      await axios.post("/api/wishlist", {
+        productId: product.id,
+        title: product.title,
+        rating: product.rating,
+        price: product.price,
+        discountPercentage: product.discountPercentage,
+      });
+      toast.success(
+        <div>
+          Add to Wishlist
+          <div style={{ color: "black", fontSize: "1rem" }}>
+            {product.title} has been added into wishlist successfully.
+          </div>
+        </div>,
+        {
+          duration: 3000,
+        }
+      );
+      setIsWishlisted(true);
+    } catch (error) {
+      console.error("Error adding into wishlist:", error);
+      toast.error("❌ Failed to add in Wishlist", {
+        description: "Something went wrong. Please try again",
         duration: 3000,
       });
     }
@@ -211,8 +251,10 @@ const page = () => {
               <div className="wishlist">
                 <Heart
                   className="text-white cursor-pointer"
-                  fill=""
+                  fill={isWishlisted ? "red" : "transparent"}
+                  strokeWidth={isWishlisted ? 0 : 1.5}
                   size={30}
+                  onClick={() => addFavourite(product.id)}
                 />
               </div>
             </div>

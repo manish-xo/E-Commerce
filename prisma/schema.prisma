@@ -7,19 +7,17 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
-
 model CartItem{
   id                    String    @id @default(auto())  @map("_id")   @db.ObjectId
   productId             Int       
   title                 String
-  rating                Float
-  brand                 String
-  category              String
+  rating                Float?
+  brand                 String?
+  category              String?
   price                 Float
-  discountPercentage    Float
-  description           String
-  stock                 Int
+  discountPercentage    Float?
+  description           String?
+  stock                 Int?
   quantity              Int       @default(1)
   addedAt               DateTime  @default(now())
 }
@@ -28,12 +26,8 @@ model WishlistItem{
   id                    String    @id @default(auto())  @map("_id")   @db.ObjectId
   productId             Int
   title                 String
-  rating                Float
-  // brand                 String
-  // category              String
+  rating                Float?
   price                 Float
-  discountPercentage    Float
-  // description           String
-  // stock                 Int
+  discountPercentage    Float?
   addedAt             DateTime  @default(now())
 }
